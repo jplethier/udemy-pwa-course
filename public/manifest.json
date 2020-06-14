@@ -10,7 +10,7 @@
   "dir": "ltr",
   "lang": "en-US",
   "orientation": "portrait-primary",
-  "icon": [
+  "icons": [
     {
       "src": "/src/images/icons/app-icon-48x48.png",
       "type": "image/png",
@@ -90,6 +90,6 @@
       "src": "/src/images/icons/apple-icon-180x180.png",
       "type": "image/png",
       "sizes": "180x180"
-    },
+    }
   ]
 }
