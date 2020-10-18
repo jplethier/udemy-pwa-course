@@ -34,13 +34,15 @@ self.addEventListener('fetch', function(event) {
         if (response) {
           return response;
         } else {
-          event.waitUntil(
-            caches.open('dynamic')
-              .then(function(cache) {
-                cache.add(event.request);
-              })
-            );
-          return fetch(event.request);
+          return fetch(event.request)
+            .then(function(res) {
+              return caches.open('dynamic')
+                .then(function(cache) {
+                  // response just can be used once, so it is important to use response.clone
+                  cache.put(event.request.url, res.clone());
+                  return res;
+                })
+            });
         }
       })
   );
