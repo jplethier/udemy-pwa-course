@@ -1,7 +1,10 @@
+var CACHE_STATIC_NAME = 'static-v5';
+var CACHE_DYNAMIC_NAME = 'dynamic-v2';
+
 self.addEventListener('install', function(event) {
   // console.log('[Service Worker] Installing Service Worker ...', event);
   event.waitUntil(
-    caches.open('static-v2')
+    caches.open(CACHE_STATIC_NAME)
       .then(function(cache) {
         console.log('[Service Worker] Precaching App Shell');
         cache.addAll([
@@ -26,7 +29,7 @@ self.addEventListener('activate', function(event) {
     caches.keys()
       .then(function(keysList) {
         return Promise.all(keysList.map(function(key) {
-          if (key !== 'static-v2' && key !== 'dynamic') {
+          if (key !== CACHE_STATIC_NAME && key !== CACHE_DYNAMIC_NAME) {
             // console.log('removing old cache: ', key);
             caches.delete(key);
           }
@@ -47,10 +50,10 @@ self.addEventListener('fetch', function(event) {
         } else {
           return fetch(event.request)
             .then(function(res) {
-              return caches.open('dynamic')
+              return caches.open(CACHE_DYNAMIC_NAME)
                 .then(function(cache) {
                   // response just can be used once, so it is important to use response.clone
-                  cache.put(event.request.url, res.clone());
+                  // cache.put(event.request.url, res.clone());
                   return res;
                 })
             }).catch(function(err) {
