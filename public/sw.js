@@ -26,11 +26,11 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
-  console.log('[Service Worker] Fetching something ...', event);
+  // console.log('[Service Worker] Fetching something ...', event);
   event.respondWith(
     caches.match(event.request)
       .then(function(response) {
-        console.log('Cache response: ', response);
+        // console.log('Cache response: ', response);
         if (response) {
           return response;
         } else {
@@ -42,6 +42,8 @@ self.addEventListener('fetch', function(event) {
                   cache.put(event.request.url, res.clone());
                   return res;
                 })
+            }).catch(function(err) {
+
             });
         }
       })
