@@ -40,6 +40,7 @@ self.addEventListener('activate', function(event) {
   return self.clients.claim();
 });
 
+// Cache with network fallback strategy
 self.addEventListener('fetch', function(event) {
   // console.log('[Service Worker] Fetching something ...', event);
   event.respondWith(
@@ -67,3 +68,37 @@ self.addEventListener('fetch', function(event) {
       })
   );
 });
+
+// // Network with cache fallback strategy, it is not very common, because it works great with offline,
+// // but it has a terrible user experience with slow connections, or slow time out errors
+// self.addEventListener('fetch', function(event) {
+//   // console.log('[Service Worker] Fetching something ...', event);
+//   event.respondWith(
+//     fetch(event.request)
+//       .then(function(res) {
+//         return caches.open(CACHE_DYNAMIC_NAME)
+//           .then(function(cache) {
+//             // response just can be used once, so it is important to use response.clone
+//             cache.put(event.request.url, res.clone());
+//             return res;
+//           })
+//       })
+//       .catch(function(err) {
+//         return caches.match(event.request)
+//       })
+//   );
+// });
+
+// // Cache-only strategy, it is only useful for some special assets
+// self.addEventListener('fetch', function(event) {
+//   event.respondWith(
+//     caches.match(event.request)
+//   );
+// });
+
+// // Network-only strategy, this strategy doesn't make much sense in general
+// self.addEventListener('fetch', function(event) {
+//   event.respondWith(
+//     fetch(event.request)
+//   );
+// });
