@@ -39,34 +39,78 @@ self.addEventListener('activate', function(event) {
   )
   return self.clients.claim();
 });
-
-// Cache, then network strategy, used together with page itself accessing cache in the first place
+// Cache, then network strategy, used only for server requests, not for static files
 self.addEventListener('fetch', function(event) {
-  // console.log('[Service Worker] Fetching something ...', event);
-  event.respondWith(
-    fetch(event.request)
-      .then(function(res) {
-        return caches.open(CACHE_DYNAMIC_NAME)
-          .then(function(cache) {
-            // response just can be used once, so it is important to use response.clone
-            cache.put(event.request.url, res.clone());
-            return res;
-          })
-      }).catch(function(err) {
-        return caches.match(event.request)
-          .then(function(response) {
-            if (response) {
-              return response;
-            } else {
-              return caches.open(CACHE_STATIC_NAME)
-                .then(function(cache) {
-                  return cache.match('/offline.html')
-                })
-            }
-          })
-      })
-  );
-});
+  var url = 'https://httpbin.org/get';
+
+  if (event.request.url.indexOf(url) > -1) {
+    event.respondWith(
+      fetch(event.request)
+        .then(function(res) {
+          return caches.open(CACHE_DYNAMIC_NAME)
+            .then(function(cache) {
+              // response just can be used once, so it is important to use response.clone
+              cache.put(event.request.url, res.clone());
+              return res;
+            })
+        }).catch(function(err) {
+          return caches.open(CACHE_STATIC_NAME)
+            .then(function(cache) {
+              return cache.match('/offline.html')
+            })
+        })
+    )
+  } else {
+    event.respondWith(
+      caches.match(event.request)
+        .then(function(response) {
+          // console.log('Cache response: ', response);
+          if (response) {
+            return response;
+          } else {
+            return fetch(event.request)
+              .then(function(res) {
+                return caches.open(CACHE_DYNAMIC_NAME)
+                  .then(function(cache) {
+                    // response just can be used once, so it is important to use response.clone
+                    cache.put(event.request.url, res.clone());
+                    return res;
+                  })
+              })
+          }
+        })
+    )
+  }
+})
+
+// // Cache, then network strategy, used together with page itself accessing cache in the first place
+// // with some code added by me to "improve" this strategy
+// self.addEventListener('fetch', function(event) {
+//   // console.log('[Service Worker] Fetching something ...', event);
+//   event.respondWith(
+//     fetch(event.request)
+//       .then(function(res) {
+//         return caches.open(CACHE_DYNAMIC_NAME)
+//           .then(function(cache) {
+//             // response just can be used once, so it is important to use response.clone
+//             cache.put(event.request.url, res.clone());
+//             return res;
+//           })
+//       }).catch(function(err) {
+//         return caches.match(event.request)
+//           .then(function(response) {
+//             if (response) {
+//               return response;
+//             } else {
+//               return caches.open(CACHE_STATIC_NAME)
+//                 .then(function(cache) {
+//                   return cache.match('/offline.html')
+//                 })
+//             }
+//           })
+//       })
+//   );
+// });
 
 // // Cache with network fallback strategy
 // self.addEventListener('fetch', function(event) {
