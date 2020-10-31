@@ -1,5 +1,5 @@
-var CACHE_STATIC_NAME = 'static-v6';
-var CACHE_DYNAMIC_NAME = 'dynamic-v2';
+var CACHE_STATIC_NAME = 'static-v9';
+var CACHE_DYNAMIC_NAME = 'dynamic-v3';
 
 self.addEventListener('install', function(event) {
   // console.log('[Service Worker] Installing Service Worker ...', event);
@@ -40,37 +40,53 @@ self.addEventListener('activate', function(event) {
   return self.clients.claim();
 });
 
-// Cache with network fallback strategy
+// Cache, then network strategy, used together with page itself accessing cache in the first place
 self.addEventListener('fetch', function(event) {
   // console.log('[Service Worker] Fetching something ...', event);
   event.respondWith(
-    caches.match(event.request)
-      .then(function(response) {
-        // console.log('Cache response: ', response);
-        if (response) {
-          return response;
-        } else {
-          return fetch(event.request)
-            .then(function(res) {
-              return caches.open(CACHE_DYNAMIC_NAME)
-                .then(function(cache) {
-                  // response just can be used once, so it is important to use response.clone
-                  cache.put(event.request.url, res.clone());
-                  return res;
-                })
-            }).catch(function(err) {
-              return caches.open(CACHE_STATIC_NAME)
-                .then(function(cache) {
-                  return cache.match('/offline.html')
-                })
-            });
-        }
+    fetch(event.request)
+      .then(function(res) {
+        return caches.open(CACHE_DYNAMIC_NAME)
+          .then(function(cache) {
+            // response just can be used once, so it is important to use response.clone
+            cache.put(event.request.url, res.clone());
+            return res;
+          })
       })
   );
 });
 
-// // Network with cache fallback strategy, it is not very common, because it works great with offline,
-// // but it has a terrible user experience with slow connections, or slow time out errors
+// // Cache with network fallback strategy
+// self.addEventListener('fetch', function(event) {
+//   // console.log('[Service Worker] Fetching something ...', event);
+//   event.respondWith(
+//     caches.match(event.request)
+//       .then(function(response) {
+//         // console.log('Cache response: ', response);
+//         if (response) {
+//           return response;
+//         } else {
+//           return fetch(event.request)
+//             .then(function(res) {
+//               return caches.open(CACHE_DYNAMIC_NAME)
+//                 .then(function(cache) {
+//                   // response just can be used once, so it is important to use response.clone
+//                   cache.put(event.request.url, res.clone());
+//                   return res;
+//                 })
+//             }).catch(function(err) {
+//               return caches.open(CACHE_STATIC_NAME)
+//                 .then(function(cache) {
+//                   return cache.match('/offline.html')
+//                 })
+//             });
+//         }
+//       })
+//   );
+// });
+
+// Network with cache fallback strategy, it is not very common, because it works great with offline,
+// but it has a terrible user experience with slow connections, or slow time out errors
 // self.addEventListener('fetch', function(event) {
 //   // console.log('[Service Worker] Fetching something ...', event);
 //   event.respondWith(
