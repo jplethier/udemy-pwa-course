@@ -73,6 +73,14 @@ self.addEventListener('fetch', function(event) {
                     return res;
                   })
               })
+              .catch(function(err) {
+                if (event.request.url.indexOf('/help')) {
+                  return caches.open(CACHE_STATIC_NAME)
+                    .then(function(cache) {
+                      return cache.match('/offline.html')
+                    })
+                }
+              })
           }
         })
     )
