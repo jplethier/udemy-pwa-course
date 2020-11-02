@@ -1,5 +1,18 @@
 var CACHE_STATIC_NAME = 'static-v9';
 var CACHE_DYNAMIC_NAME = 'dynamic-v3';
+var STATIC_FILES = [
+  '/',
+  '/index.html',
+  '/src/js/app.js',
+  '/src/js/feed.js',
+  '/src/js/material.min.js',
+  '/src/css/app.css',
+  '/src/css/feed.css',
+  'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css',
+  'https://fonts.googleapis.com/css?family=Roboto:400,700',
+  'https://fonts.googleapis.com/icon?family=Material+Icons',
+  '/offline.html'
+];
 
 self.addEventListener('install', function(event) {
   // console.log('[Service Worker] Installing Service Worker ...', event);
@@ -7,19 +20,7 @@ self.addEventListener('install', function(event) {
     caches.open(CACHE_STATIC_NAME)
       .then(function(cache) {
         console.log('[Service Worker] Precaching App Shell');
-        cache.addAll([
-          '/',
-          '/index.html',
-          '/src/js/app.js',
-          '/src/js/feed.js',
-          '/src/js/material.min.js',
-          '/src/css/app.css',
-          '/src/css/feed.css',
-          'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css',
-          'https://fonts.googleapis.com/css?family=Roboto:400,700',
-          'https://fonts.googleapis.com/icon?family=Material+Icons',
-          '/offline.html'
-        ])
+        cache.addAll(STATIC_FILES)
       })
   )
 });
@@ -40,6 +41,14 @@ self.addEventListener('activate', function(event) {
   return self.clients.claim();
 });
 
+function isInArray(string, array) {
+  for (var i = 0; i < array.length; i++) {
+    if (array[i] == string) { return true; }
+  }
+
+  return false;
+}
+
 // Cache, then network strategy, used only for server requests, not for static files
 self.addEventListener('fetch', function(event) {
   var url = 'https://httpbin.org/get';
@@ -55,6 +64,11 @@ self.addEventListener('fetch', function(event) {
               return res;
             })
         })
+    )
+  // using cache only strategy for static files
+  } else if (isInArray(request.event.url, STATIC_FILES)) {
+    event.respondWith(
+      caches.match(event.request)
     )
   } else {
     event.respondWith(
