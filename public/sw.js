@@ -14,6 +14,19 @@ var STATIC_FILES = [
   '/offline.html'
 ];
 
+function trimCache(cacheName, maxItems) {
+  caches.open(cacheName)
+    .then(function(cache) {
+      return cache.keys()
+        .then(function(keys) {
+          if (keys.length > maxItems) {
+            cache.delete(keys[0])
+              .then(trimCache(cacheName, maxItems));
+          }
+        });
+    })
+};
+
 self.addEventListener('install', function(event) {
   // console.log('[Service Worker] Installing Service Worker ...', event);
   event.waitUntil(
@@ -62,6 +75,7 @@ self.addEventListener('fetch', function(event) {
         .then(function(res) {
           return caches.open(CACHE_DYNAMIC_NAME)
             .then(function(cache) {
+              trimCache(CACHE_DYNAMIC_NAME, 10);
               // response just can be used once, so it is important to use response.clone
               cache.put(event.request.url, res.clone());
               return res;
@@ -69,7 +83,7 @@ self.addEventListener('fetch', function(event) {
         })
     )
   // using cache only strategy for static files
-  } else if (isInArray(request.event.url, STATIC_FILES)) {
+  } else if (isInArray(event.request.url, STATIC_FILES)) {
     event.respondWith(
       caches.match(event.request)
     )
@@ -85,13 +99,14 @@ self.addEventListener('fetch', function(event) {
               .then(function(res) {
                 return caches.open(CACHE_DYNAMIC_NAME)
                   .then(function(cache) {
+                    trimCache(CACHE_DYNAMIC_NAME, 10);
                     // response just can be used once, so it is important to use response.clone
                     cache.put(event.request.url, res.clone());
                     return res;
                   })
               })
               .catch(function(err) {
-                if (event.request.headers.get('accept').includes('text/html'))) {
+                if (event.request.headers.get('accept').includes('text/html')) {
                   return caches.open(CACHE_STATIC_NAME)
                     .then(function(cache) {
                       return cache.match('/offline.html')
