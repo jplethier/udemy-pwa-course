@@ -20,6 +20,16 @@ function openCreatePostModal() {
 
     deferredPrompt = null;
   }
+
+  // // example on how to get rid of a service worker
+  // if ('serviceWorker' in navigator) {
+  //   navigator.serviceWorker.getRegistrations()
+  //     .then(function(registrations) {
+  //       for (var i = 0; i < registrations.length; i++) {
+  //         registrations[i].unregister();
+  //       }
+  //     })
+  // }
 }
 
 function closeCreatePostModal() {
