@@ -1,5 +1,5 @@
-var CACHE_STATIC_NAME = 'static-v9';
-var CACHE_DYNAMIC_NAME = 'dynamic-v3';
+var CACHE_STATIC_NAME = 'static-v11';
+var CACHE_DYNAMIC_NAME = 'dynamic-v4';
 var STATIC_FILES = [
   '/',
   '/index.html',
@@ -67,7 +67,7 @@ function isInArray(string, array) {
 
 // Cache, then network strategy, used only for server requests, not for static files
 self.addEventListener('fetch', function(event) {
-  var url = 'https://httpbin.org/get';
+  var url = 'https://pwa-gram-49437.firebaseio.com/posts.json';
 
   if (event.request.url.indexOf(url) > -1) {
     event.respondWith(
