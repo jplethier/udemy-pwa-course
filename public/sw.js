@@ -1,4 +1,5 @@
 importScripts('https://unpkg.com/idb@5.0.7/build/iife/index-min.js');
+importScripts('/src/js/utility.js');
 
 var CACHE_STATIC_NAME = 'static-v11';
 var CACHE_DYNAMIC_NAME = 'dynamic-v4';
@@ -13,14 +14,10 @@ var STATIC_FILES = [
   'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css',
   'https://fonts.googleapis.com/css?family=Roboto:400,700',
   'https://fonts.googleapis.com/icon?family=Material+Icons',
-  '/offline.html'
+  '/offline.html',
+  'https://unpkg.com/idb@5.0.7/build/iife/index-min.js',
+  '/src/js/utility.js'
 ];
-
-var dbPromise = idb.openDB('posts-store', 2, {
-  upgrade(db, oldVersion, newVersion, transaction) {
-    db.createObjectStore('posts', { keyPath: 'id' });
-  }
-});
 
 function trimCache(cacheName, maxItems) {
   caches.open(cacheName)
@@ -83,13 +80,11 @@ self.addEventListener('fetch', function(event) {
         .then(function(res) {
           res.clone().json()
             .then(function(data) {
-              dbPromise.then(function(db) {
-                for (var key in data) {
-                  if (!!data[key]) {
-                    db.put('posts', data[key]);
-                  }
+              for (var key in data) {
+                if (!!data[key]) {
+                  writeData('posts', data[key]);
                 }
-              })
+              }
             })
           return res;
         })
