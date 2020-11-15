@@ -10,3 +10,13 @@ function writeData(store, data) {
       return db.put(store, data)
     })
 }
+
+function readAllData(store) {
+  return dbPromise
+    .then(function(db) {
+      return db.getAll(store)
+        .then(function(data) {
+          return data;
+        })
+    })
+}
