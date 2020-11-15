@@ -1,3 +1,5 @@
+importScripts('https://unpkg.com/idb@5.0.7/build/iife/index-min.js');
+
 var CACHE_STATIC_NAME = 'static-v11';
 var CACHE_DYNAMIC_NAME = 'dynamic-v4';
 var STATIC_FILES = [
@@ -13,6 +15,12 @@ var STATIC_FILES = [
   'https://fonts.googleapis.com/icon?family=Material+Icons',
   '/offline.html'
 ];
+
+var dbPromise = idb.openDB('posts-store', 2, {
+  upgrade(db, oldVersion, newVersion, transaction) {
+    db.createObjectStore('posts', { keyPath: 'id' });
+  }
+});
 
 function trimCache(cacheName, maxItems) {
   caches.open(cacheName)
@@ -73,13 +81,17 @@ self.addEventListener('fetch', function(event) {
     event.respondWith(
       fetch(event.request)
         .then(function(res) {
-          return caches.open(CACHE_DYNAMIC_NAME)
-            .then(function(cache) {
-              trimCache(CACHE_DYNAMIC_NAME, 10);
-              // response just can be used once, so it is important to use response.clone
-              cache.put(event.request.url, res.clone());
-              return res;
+          res.clone().json()
+            .then(function(data) {
+              dbPromise.then(function(db) {
+                for (var key in data) {
+                  if (!!data[key]) {
+                    db.put('posts', data[key]);
+                  }
+                }
+              })
             })
+          return res;
         })
     )
   // using cache only strategy for static files
