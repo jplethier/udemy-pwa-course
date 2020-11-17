@@ -31,3 +31,10 @@ function clearData(store) {
         });
     })
 }
+
+function deleteItemFromData(store, itemId) {
+  return dbPromise
+    .then(function(db) {
+      return db.delete(store, idemId)
+    })
+}
