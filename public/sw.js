@@ -1,7 +1,7 @@
 importScripts('https://unpkg.com/idb@5.0.7/build/iife/index-min.js');
 importScripts('/src/js/utility.js');
 
-var CACHE_STATIC_NAME = 'static-v16';
+var CACHE_STATIC_NAME = 'static-v18';
 var CACHE_DYNAMIC_NAME = 'dynamic-v4';
 var STATIC_FILES = [
   '/',
@@ -80,6 +80,7 @@ self.addEventListener('fetch', function(event) {
         .then(function(res) {
           res.clone().json()
             .then(function(data) {
+              clearData('posts');
               for (var key in data) {
                 if (!!data[key]) {
                   writeData('posts', data[key]);

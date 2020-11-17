@@ -20,3 +20,14 @@ function readAllData(store) {
         })
     })
 }
+
+function clearData(store) {
+  return dbPromise
+    .then(function(db) {
+      return db.clear(store)
+        .then(function(data) {
+          console.log(data);
+          return data;
+        });
+    })
+}
