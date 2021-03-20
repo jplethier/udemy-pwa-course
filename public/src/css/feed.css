@@ -32,4 +32,50 @@
 
 .shared-moment-card.mdl-card {
   margin: 10px auto;
+  width: 270px;
+}
+
+.shared-moment-card .mdl-card__title {
+  height: 140px;
+
+  background-position: top;
+  background-size: cover;
+}
+
+.shared-moment-card h2.mdl-card__title-text {
+  color: white;
+  font-size: 1em;
+}
+
+.shared-moment-card .mdl-card__supporting-text {
+  text-align: center;
+  line-height: 12px;
+  font-size: .8rem;
+
+  padding: 12px;
+}
+
+.mdl-card {
+  min-height: none;
+}
+
+@media (min-width: 600px) {
+  .shared-moment-card.mdl-card {
+    width: 400px;
+  }
+
+  .shared-moment-card .mdl-card__title {
+    height: 180px;
+  }
+
+  .shared-moment-card h2.mdl-card__title-text {
+    font-size: 1.5em;
+  }
+
+  .shared-moment-card .mdl-card__supporting-text {
+    line-height: 18px;
+    font-size: 1rem;
+
+    padding: 16px;
+  }
 }

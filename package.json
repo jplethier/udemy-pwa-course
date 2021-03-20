@@ -18,5 +18,8 @@
   "license": "ISC",
   "devDependencies": {
     "http-server": "^0.12.3"
+  },
+  "dependencies": {
+    "idb": "^5.0.7"
   }
 }
