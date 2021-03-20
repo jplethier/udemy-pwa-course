@@ -80,6 +80,7 @@ function createCard(data) {
 }
 
 function updateUi(data) {
+  clearCards();
   for (var i = 0; i < data.length; i++) {
     createCard(data[i]);
   }
@@ -95,7 +96,6 @@ fetch(url)
   .then(function(data) {
     networkDataReceived = true;
     console.log('Data from web: ', data);
-    clearCards();
     var dataArray = [];
     for (var key in data) {
       if (!!data[key]) { dataArray.push(data[key]) };
@@ -107,7 +107,7 @@ if ('indexedDB' in window) {
   readAllData('posts')
     .then(function(data) {
       if (!networkDataReceived) {
-        clearCards();
+        console.log('From cache', data);
         updateUi(data);
       }
     });

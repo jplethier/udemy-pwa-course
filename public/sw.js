@@ -72,7 +72,7 @@ function isInArray(string, array) {
 
 // Cache, then network strategy, used only for server requests, not for static files
 self.addEventListener('fetch', function(event) {
-  var url = 'https://pwa-gram-49437.firebaseio.com/posts.json';
+  var url = 'https://pwa-gram-49437.firebaseio.com/posts';
 
   if (event.request.url.indexOf(url) > -1) {
     event.respondWith(
