@@ -18,6 +18,7 @@ var STATIC_FILES = [
   'https://unpkg.com/idb@5.0.7/build/iife/index-min.js',
   '/src/js/utility.js'
 ];
+var POSTS_URL = 'https://pwa-gram-49437.firebaseio.com/posts.json';
 
 function trimCache(cacheName, maxItems) {
   caches.open(cacheName)
@@ -72,9 +73,7 @@ function isInArray(string, array) {
 
 // Cache, then network strategy, used only for server requests, not for static files
 self.addEventListener('fetch', function(event) {
-  var url = 'https://pwa-gram-49437.firebaseio.com/posts';
-
-  if (event.request.url.indexOf(url) > -1) {
+  if (event.request.url.indexOf(POSTS_URL) > -1) {
     event.respondWith(
       fetch(event.request)
         .then(function(res) {
@@ -126,3 +125,21 @@ self.addEventListener('fetch', function(event) {
     )
   }
 })
+
+self.addEventListener('sync', function(event) {
+  if (event.tag === 'sync-new-post') {
+    event.waitUntil(
+      readAllData('new-posts').then(function(data) {
+        for (var post of data) {
+          sendData(POSTS_URL, post).then(function(res) {
+            if (res.ok) {
+              deleteItemFromData('new-posts', post.id); // Isn't working correctly
+            }
+          }).catch(function(err) {
+            console.log('Error while sendint data: ', err);
+          });
+        }
+      })
+    );
+  }
+});
