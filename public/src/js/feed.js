@@ -91,6 +91,7 @@ function updateUi(data) {
 }
 
 var url = 'https://pwa-gram-49437.firebaseio.com/posts.json';
+var createPostUrl = 'https://us-central1-pwa-gram-49437.cloudfunctions.net/storePostData'
 var networkDataReceived = false;
 
 fetch(url)
@@ -147,7 +148,7 @@ form.addEventListener('submit', function(event) {
         });
     })
   } else {
-    sendData(url, post).then(function() {
+    sendData(createPostUrl, post).then(function() {
       updateUi();
     });
   }

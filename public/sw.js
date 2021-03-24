@@ -19,6 +19,7 @@ var STATIC_FILES = [
   '/src/js/utility.js'
 ];
 var POSTS_URL = 'https://pwa-gram-49437.firebaseio.com/posts.json';
+var SEND_POST_URL = 'https://us-central1-pwa-gram-49437.cloudfunctions.net/storePostData'
 
 function trimCache(cacheName, maxItems) {
   caches.open(cacheName)
@@ -131,7 +132,7 @@ self.addEventListener('sync', function(event) {
     event.waitUntil(
       readAllData('new-posts').then(function(data) {
         for (var post of data) {
-          sendData(POSTS_URL, post).then(function(res) {
+          sendData(SEND_POST_URL, post).then(function(res) {
             if (res.ok) {
               deleteItemFromData('new-posts', post.id); // Isn't working correctly
             }
