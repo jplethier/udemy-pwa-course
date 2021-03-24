@@ -8,12 +8,11 @@ var serviceAccount = require("./serviceAccountKey.json");
 //
 
 admin.initializeApp({
-  databaseURL: "https://pwa-gram-49437.firebaseio.com",
+  databaseURL: "https://pwa-gram-49437.firebaseio.com/",
   credential: admin.credential.cert(serviceAccount),
 });
 
 exports.storePostData = functions.https.onRequest(function(request, response) {
-  functions.logger.info("Receiving request", { structuredData: true, body: request.body });
   cors(request, response, function() {
     admin.database().ref("posts").push({
       id: request.body.id,
