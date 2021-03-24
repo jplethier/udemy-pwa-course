@@ -134,7 +134,9 @@ self.addEventListener('sync', function(event) {
         for (var post of data) {
           sendData(SEND_POST_URL, post).then(function(res) {
             if (res.ok) {
-              deleteItemFromData('new-posts', post.id); // Isn't working correctly
+              res.json().then(function(resData) {
+                deleteItemFromData('new-posts', resData.id);
+              })
             }
           }).catch(function(err) {
             console.log('Error while sendint data: ', err);
