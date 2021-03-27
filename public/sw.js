@@ -159,4 +159,22 @@ self.addEventListener('notificationclick', function(event) {
 self.addEventListener('notificationclose', function(event) {
   var notification = event.notification;
   console.log('Closed notification: ', notification.tag)
-})
+});
+
+self.addEventListener('push', function(event) {
+  var data = { title: 'New notification', content: 'Notification received' };
+  if (event.data) {
+    data = JSON.parse(event.data.text());
+  }
+
+  var options = {
+    body: data.content,
+    icon: '/src/images/icons/app-icon-96x96.png',
+    badge: '/src/images/icons/app-icon-96x96.png',
+    image: data.image,
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});
