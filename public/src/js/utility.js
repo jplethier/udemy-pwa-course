@@ -50,3 +50,23 @@ function sendData(url, data) {
     body: JSON.stringify(data)
   })
 }
+
+function urlBase64toUint8Array(base64String) {
+  var padding = '='.repeat((4 - base64String.length % 4) % 4);
+  var base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/');
+
+  var rawData = window.atob(base64);
+  var outputArray = new Uint8Array(rawData.length);
+
+  for (var i = 0; i < rawData.length; i++) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+
+  return outputArray;
+}
+
+function getApplicationServerKey() {
+  return urlBase64toUint8Array('BLTJtFlXGiLUWqoiPwJev_7FaZyWa1ibzI091bhhht7N7Jt8P-c90Y7UePlG_jU3dx2Lykm1vxASWms00phV-oU');
+}
