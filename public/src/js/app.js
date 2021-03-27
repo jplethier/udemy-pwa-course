@@ -1,5 +1,6 @@
 
 var deferredPrompt;
+var enableNotificationsButtons = document.querySelectorAll('.enable-notifications');
 
 if (!window.Promise) {
   window.Promise = Promise;
@@ -22,3 +23,21 @@ window.addEventListener('beforeinstallprompt', function(event) {
   deferredPrompt = event;
   return false;
 });
+
+function askForNotificationPermission() {
+  Notification.requestPermission(function(result) {
+    if (result === 'granted') {
+      var options = {
+        body: 'You successfully subscribed to our notification service!'
+      }
+      displayNotification('Successfully subscribed', options);
+    }
+  })
+}
+
+if ('Notification' in window) {
+  for (var i = 0; i < enableNotificationsButtons.length; i++) {
+    enableNotificationsButtons[i].style.display = 'inline-block';
+    enableNotificationsButtons[i].addEventListener('click', askForNotificationPermission)
+  }
+}

@@ -50,3 +50,7 @@ function sendData(url, data) {
     body: JSON.stringify(data)
   })
 }
+
+function displayNotification(title, options) {
+  new Notification(title, options);
+}
