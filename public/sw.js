@@ -153,6 +153,23 @@ self.addEventListener('notificationclick', function(event) {
 
   if (action === 'confirm') {
     notification.close();
+  } else {
+    event.waitUntil(
+      clients.matchAll()
+        .then(function(clis) {
+          var client = clis.find(function(c) {
+            return c.visibilityState === 'visible';
+          })
+
+          if (client !== undefined) {
+            client.navigate('http://localhost:8080');
+            client.focus();
+          } else {
+            clients.openWindow('http://localhost:8080');
+          }
+        })
+    )
+    notification.close();
   }
 });
 
