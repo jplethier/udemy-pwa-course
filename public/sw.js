@@ -154,4 +154,9 @@ self.addEventListener('notificationclick', function(event) {
   if (action === 'confirm') {
     notification.close();
   }
+});
+
+self.addEventListener('notificationclose', function(event) {
+  var notification = event.notification;
+  console.log('Closed notification: ', notification.tag)
 })
