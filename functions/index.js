@@ -1,6 +1,6 @@
 var functions = require("firebase-functions");
 var admin = require("firebase-admin");
-var cors = require("cors");
+var cors = require("cors")({origin: true});
 var serviceAccount = require("./serviceAccountKey.json");
 
 // // Create and Deploy Your First Cloud Functions
