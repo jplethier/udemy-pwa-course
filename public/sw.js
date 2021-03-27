@@ -146,3 +146,12 @@ self.addEventListener('sync', function(event) {
     );
   }
 });
+
+self.addEventListener('notificationclick', function(event) {
+  var notification = event.notification;
+  var action = event.action;
+
+  if (action === 'confirm') {
+    notification.close();
+  }
+})
