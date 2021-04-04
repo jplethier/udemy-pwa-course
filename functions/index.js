@@ -35,7 +35,12 @@ exports.storePostData = functions.https.onRequest(function(request, response) {
         // }
         var pushConfig = sub.val();
 
-        webpush.sendNotification(pushConfig, JSON.stringify({title: "New post", content: request.body.title, image: request.body.image}))
+        webpush.sendNotification(pushConfig, JSON.stringify({
+          title: "New post",
+          content: request.body.title,
+          image: request.body.image,
+          openUrl: "/help",
+        }))
           .catch(function(err) {
             console.log(err);
           })
