@@ -11,6 +11,7 @@ var canvasElement = document.querySelector('#canvas');
 var captureButton = document.querySelector('#capture-btn');
 var imagePicker = document.querySelector('#image-picker');
 var imagePickerArea = document.querySelector('#pick-image');
+var picture;
 
 function initializeMedia() {
   if (!("mediaDevices" in navigator)) {
@@ -53,6 +54,7 @@ captureButton.addEventListener("click", function(event) {
   videoPlayer.srcObject.getVideoTracks().forEach(function(stream) {
     stream.stop();
   });
+  picture = dataURItoBlob(canvasElement.toDataURL());
 });
 
 function openCreatePostModal() {
@@ -144,7 +146,6 @@ function updateUi(data) {
 }
 
 var url = 'https://pwa-gram-49437.firebaseio.com/posts.json';
-var createPostUrl = 'https://us-central1-pwa-gram-49437.cloudfunctions.net/storePostData'
 var networkDataReceived = false;
 
 fetch(url)
@@ -185,7 +186,7 @@ form.addEventListener('submit', function(event) {
     id: new Date().toISOString(),
     title: titleInput.value,
     location: locationInput.value,
-    image: pictureInput.value,
+    image: picture,
   }
 
   if ('serviceWorker' in navigator && 'SyncManager' in window) {
@@ -201,7 +202,7 @@ form.addEventListener('submit', function(event) {
         });
     })
   } else {
-    sendData(createPostUrl, post).then(function() {
+    sendPost(post).then(function() {
       updateUi();
     });
   }
